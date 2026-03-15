@@ -8,6 +8,7 @@ export interface Question {
   options: Option[];           // [{a:"..."}, {b:"..."}, {c:"..."}, {d:"..."}]
   answer: string[];            // ["New Delhi"] — actual values
   additionalOptions?: Option[]; // TS2 only — [{a:"answer 1"}, {b:"answer 2"}, ...]
+  alignment: 'right' | 'left'; // default "right", "left" for Arabic/RTL
 }
 
 export interface Examination {

@@ -27,6 +27,7 @@ interface Question {
   options: Option[];
   answer: string[];
   additionalOptions?: Option[];
+  alignment: 'right' | 'left';
 }
 
 interface Examination {
@@ -188,7 +189,9 @@ export default function ViewExaminationPage() {
       </Typography>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        {examination.questions.map((q, index) => (
+        {examination.questions.map((q, index) => {
+          const isRtl = q.alignment === 'left';
+          return (
           <Accordion
             key={q.id}
             elevation={0}
@@ -200,13 +203,14 @@ export default function ViewExaminationPage() {
             }}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight={500} sx={{ mr: 1 }}>
+              <Typography fontWeight={500} sx={{ mr: 1, direction: isRtl ? 'rtl' : 'ltr', textAlign: isRtl ? 'right' : 'left', width: '100%' }}>
                 <Box
                   component="span"
                   sx={{
                     color: '#667eea',
                     fontWeight: 700,
-                    mr: 1.5,
+                    mr: isRtl ? 0 : 1.5,
+                    ml: isRtl ? 1.5 : 0,
                   }}
                 >
                   Q{index + 1}.
@@ -214,7 +218,7 @@ export default function ViewExaminationPage() {
                 {q.question}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails sx={{ pt: 0 }}>
+            <AccordionDetails sx={{ pt: 0, direction: isRtl ? 'rtl' : 'ltr', textAlign: isRtl ? 'right' : 'left' }}>
               {/* Additional Options (TS2) */}
               {q.additionalOptions && q.additionalOptions.length > 0 && (
                 <Box sx={{ mb: 2 }}>
@@ -327,7 +331,8 @@ export default function ViewExaminationPage() {
               </Box>
             </AccordionDetails>
           </Accordion>
-        ))}
+          );
+        })}
       </Box>
     </Box>
   );

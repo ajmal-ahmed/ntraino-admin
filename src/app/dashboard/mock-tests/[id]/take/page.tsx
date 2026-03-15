@@ -32,6 +32,7 @@ interface Question {
   question: string;
   options: Option[];
   additionalOptions?: Option[];
+  alignment: 'right' | 'left';
 }
 
 interface MockTestData {
@@ -201,6 +202,7 @@ export default function TakeTestPage() {
   const selectedAnswer = answers.get(currentQuestion.id);
   const answeredCount = answers.size;
   const progress = ((currentIndex + 1) / questions.length) * 100;
+  const isRtl = currentQuestion.alignment === 'left';
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto' }}>
@@ -328,9 +330,9 @@ export default function TakeTestPage() {
           <Typography
             variant="h6"
             fontWeight={600}
-            sx={{ mb: 3, lineHeight: 1.6 }}
+            sx={{ mb: 3, lineHeight: 1.6, direction: isRtl ? 'rtl' : 'ltr', textAlign: isRtl ? 'right' : 'left' }}
           >
-            <Box component="span" sx={{ color: '#667eea', mr: 1 }}>
+            <Box component="span" sx={{ color: '#667eea', mr: isRtl ? 0 : 1, ml: isRtl ? 1 : 0 }}>
               Q{currentIndex + 1}.
             </Box>
             {currentQuestion.question}
@@ -346,6 +348,8 @@ export default function TakeTestPage() {
                   borderRadius: 2,
                   backgroundColor: 'rgba(240, 147, 251, 0.04)',
                   border: '1px solid rgba(240, 147, 251, 0.15)',
+                  direction: isRtl ? 'rtl' : 'ltr',
+                  textAlign: isRtl ? 'right' : 'left',
                 }}
               >
                 <Typography

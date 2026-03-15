@@ -41,7 +41,8 @@
     "question": "string",
     "options": [{"a": "value"}, {"b": "value"}, {"c": "value"}, {"d": "value"}],
     "answer": ["actual value"],
-    "additionalOptions": [{"a": "..."}, ...] // TS2 only
+    "additionalOptions": [{"a": "..."}, ...], // TS2 only, omitted if all empty
+    "alignment": "right | left"               // default "right", "left" for Arabic
   }],
   "totalQuestions": "number",
   "createdBy": "string",
@@ -77,9 +78,11 @@
 
 ## Template Formats (XLSX)
 
-- **TS1**: `Question, option-1, option-2, option-3, option-4, Answer`
-- **TS2**: `Question, answer-1, answer-2, answer-3, answer-4, option-1, option-2, option-3, option-4, Answer`
+- **TS1**: `Question, option-1, option-2, option-3, option-4, Answer [, alignment]`
+- **TS2**: `Question, answer-1, answer-2, answer-3, answer-4, option-1, option-2, option-3, option-4, Answer [, alignment]`
 - TS2 `additionalOptions` (answer-1..4) are rendered before the main options in the UI
+- **TS2 optimization**: if all answer-1..4 are empty, `additionalOptions` is omitted (behaves like TS1)
+- **Alignment column**: optional, defaults to `"right"`. Only stores `"left"` when explicitly set (for Arabic/RTL)
 - Options and answer logic is identical for both types
 
 ---
@@ -94,6 +97,8 @@
 | **Firebase Admin SDK** | Server-side Firestore access in API routes (needs `FIREBASE_SERVICE_ACCOUNT_KEY` in `.env.local`) |
 | **`@opentelemetry/api`** | Required peer dependency of `firebase-admin` — must be explicitly installed |
 | **Sample template downloads** | API at `/api/templates/sample?type=ts1|ts2` generates XLSX on the fly |
+| **TS2 empty answer fallback** | If all answer-1..4 columns are blank, question behaves exactly like TS1 — no empty arrays stored |
+| **Alignment column** | Optional XLSX column, default `"right"`, `"left"` for Arabic. UI applies `dir="rtl"` + `textAlign: right` per question |
 
 ---
 

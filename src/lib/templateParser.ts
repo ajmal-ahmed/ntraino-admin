@@ -4,8 +4,11 @@ import { Question, Option } from '@/types/examination';
 /**
  * Parse an XLSX template file into an array of Question objects.
  *
- * TS1 columns: Question, option-1, option-2, option-3, option-4, Answer
- * TS2 columns: Question, answer-1, answer-2, answer-3, answer-4, option-1, option-2, option-3, option-4, Answer
+ * TS1 columns: Question, option-1, option-2, option-3, option-4, Answer [, alignment]
+ * TS2 columns: Question, answer-1, answer-2, answer-3, answer-4, option-1, option-2, option-3, option-4, Answer [, alignment]
+ *
+ * alignment column is optional — defaults to "right", stores "left" only when explicitly set.
+ * TS2: if all answer-1..4 are empty, additionalOptions is omitted.
  */
 export function parseTemplate(
   buffer: Buffer,
@@ -36,8 +39,16 @@ export function parseTemplate(
 }
 
 /**
+ * Read the alignment column — returns "left" only if explicitly set, otherwise "right".
+ */
+function getAlignment(row: Record<string, string>): 'right' | 'left' {
+  const value = getColumn(row, 'alignment').toLowerCase();
+  return value === 'left' ? 'left' : 'right';
+}
+
+/**
  * TS1 format:
- * Question | option-1 | option-2 | option-3 | option-4 | Answer
+ * Question | option-1 | option-2 | option-3 | option-4 | Answer [| alignment]
  */
 function parseTS1(rows: Record<string, string>[]): Question[] {
   return rows.map((row, index) => {
@@ -64,16 +75,19 @@ function parseTS1(rows: Record<string, string>[]): Question[] {
       question,
       options,
       answer: [answer],
+      alignment: getAlignment(row),
     };
   });
 }
 
 /**
  * TS2 format:
- * Question | answer-1 | answer-2 | answer-3 | answer-4 | option-1 | option-2 | option-3 | option-4 | Answer
+ * Question | answer-1 | answer-2 | answer-3 | answer-4 | option-1 | option-2 | option-3 | option-4 | Answer [| alignment]
  *
  * additionalOptions = answer-1..4 (context rendered before options)
  * options = option-1..4 (the selectable choices, e.g. "A & B", "Only C", etc.)
+ *
+ * If all answer-1..4 are empty, additionalOptions is omitted entirely.
  */
 function parseTS2(rows: Record<string, string>[]): Question[] {
   return rows.map((row, index) => {
@@ -99,20 +113,26 @@ function parseTS2(rows: Record<string, string>[]): Question[] {
       { d: opt4 },
     ];
 
-    const additionalOptions: Option[] = [
-      { a: ans1 },
-      { b: ans2 },
-      { c: ans3 },
-      { d: ans4 },
-    ];
-
-    return {
+    const result: Question = {
       id: `q${index + 1}`,
       question,
       options,
       answer: [answer],
-      additionalOptions,
+      alignment: getAlignment(row),
     };
+
+    // Only include additionalOptions if at least one answer column has data
+    const hasAdditionalOptions = [ans1, ans2, ans3, ans4].some((v) => v !== '');
+    if (hasAdditionalOptions) {
+      result.additionalOptions = [
+        { a: ans1 },
+        { b: ans2 },
+        { c: ans3 },
+        { d: ans4 },
+      ];
+    }
+
+    return result;
   });
 }
 

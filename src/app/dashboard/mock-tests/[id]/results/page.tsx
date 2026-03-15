@@ -49,6 +49,7 @@ interface Question {
   options: Option[];
   answer: string[];
   additionalOptions?: Option[];
+  alignment: 'right' | 'left';
 }
 
 export default function TestResultsPage() {
@@ -321,6 +322,7 @@ export default function TestResultsPage() {
           const isCorrect = response?.isCorrect || false;
           const selectedAnswer = response?.selectedAnswer || [];
           const timeTaken = response?.timeTaken || 0;
+          const isRtl = q.alignment === 'left';
 
           return (
             <Card
@@ -338,7 +340,7 @@ export default function TestResultsPage() {
                   : 'rgba(239, 68, 68, 0.02)',
               }}
             >
-              <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
+              <CardContent sx={{ p: 3, '&:last-child': { pb: 3 }, direction: isRtl ? 'rtl' : 'ltr', textAlign: isRtl ? 'right' : 'left' }}>
                 <Box
                   sx={{
                     display: 'flex',
