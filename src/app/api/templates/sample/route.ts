@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
         'option-4': 'Chennai',
         'Answer': 'New Delhi',
         'alignment': '',
+        'passage': 'Read the following and answer the question:\nIndia is a country in South Asia with New Delhi as its capital.',
       },
       {
         'Question': 'What is 2 + 2?',
@@ -36,6 +37,7 @@ export async function GET(request: NextRequest) {
         'option-4': '6',
         'Answer': '4',
         'alignment': '',
+        'passage': '',
       },
       {
         'Question': '\u0645\u0627 \u0647\u064A \u0639\u0627\u0635\u0645\u0629 \u0645\u0635\u0631\u061F',
@@ -62,6 +64,7 @@ export async function GET(request: NextRequest) {
         'option-4': 'None of the above',
         'Answer': 'A & B only',
         'alignment': '',
+        'passage': 'Consider the following technologies and how they are used in web development.',
       },
       {
         'Question': 'Which of these are NoSQL databases?',
@@ -75,6 +78,7 @@ export async function GET(request: NextRequest) {
         'option-4': 'All of the above',
         'Answer': 'A & B only',
         'alignment': '',
+        'passage': '',
       },
       {
         'Question': 'What is the largest ocean on Earth?',

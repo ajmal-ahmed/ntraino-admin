@@ -49,6 +49,7 @@ interface Question {
   options: Option[];
   answer: string[];
   additionalOptions?: Option[];
+  passage?: string;
   alignment: 'right' | 'left';
 }
 
@@ -159,7 +160,7 @@ export default function TestResultsPage() {
           overflow: 'hidden',
         }}
       >
-        <Box
+                <Box
           sx={{
             height: 6,
             background: `linear-gradient(90deg, ${gradeInfo.color}, ${gradeInfo.color}88)`,
@@ -349,12 +350,31 @@ export default function TestResultsPage() {
                     mb: 2,
                   }}
                 >
-                  <Typography variant="body1" fontWeight={600}>
-                    <Box component="span" sx={{ color: '#667eea', mr: 1 }}>
-                      Q{index + 1}.
-                    </Box>
-                    {q.question}
-                  </Typography>
+                  <Box>
+                    <Typography variant="body1" fontWeight={600} sx={{ mb: q.passage ? 1 : 0 }}>
+                      <Box component="span" sx={{ color: '#667eea', mr: 1 }}>
+                        Q{index + 1}.
+                      </Box>
+                      {q.question}
+                    </Typography>
+                    {q.passage && (
+                      <Box
+                        sx={{
+                          mt: 0.5,
+                          p: 1.5,
+                          borderRadius: 2,
+                          backgroundColor: 'rgba(59, 130, 246, 0.04)',
+                          border: '1px solid rgba(59, 130, 246, 0.15)',
+                          direction: isRtl ? 'rtl' : 'ltr',
+                          textAlign: isRtl ? 'right' : 'left',
+                        }}
+                      >
+                        <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                          {q.passage}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Chip
                       icon={<TimerIcon />}
@@ -373,18 +393,37 @@ export default function TestResultsPage() {
 
                 {/* Additional Options (TS2) */}
                 {q.additionalOptions && q.additionalOptions.length > 0 && (
-                  <Box sx={{ mb: 2, pl: 2 }}>
-                    {q.additionalOptions.map((opt, i) => {
-                      const key = Object.keys(opt)[0];
-                      return (
-                        <Typography key={i} variant="body2" color="text.secondary" sx={{ py: 0.2 }}>
-                          <Box component="span" sx={{ fontWeight: 700, color: '#f093fb', mr: 0.5 }}>
-                            {key.toUpperCase()}.
-                          </Box>
-                          {opt[key]}
-                        </Typography>
-                      );
-                    })}
+                  <Box
+                    sx={{
+                      mb: 2,
+                      pl: isRtl ? 0 : 2,
+                      pr: isRtl ? 2 : 0,
+                      direction: isRtl ? 'rtl' : 'ltr',
+                      textAlign: isRtl ? 'right' : 'left',
+                    }}
+                  >
+                    {q.additionalOptions
+                      .map((opt) => {
+                        const key = Object.keys(opt)[0];
+                        const value = opt[key];
+                        return value ? value : null;
+                      })
+                      .filter((value): value is string => Boolean(value))
+                      .map((value, index) => {
+                        const romanLabels = ['i', 'ii', 'iii', 'iv'];
+                        const label = romanLabels[index] || `${index + 1}`;
+                        return (
+                          <Typography key={index} variant="body2" color="text.secondary" sx={{ py: 0.2 }}>
+                            <Box
+                              component="span"
+                              sx={{ fontWeight: 700, color: '#f093fb', mr: 0.5, textTransform: 'lowercase' }}
+                            >
+                              {label}.
+                            </Box>
+                            {value}
+                          </Typography>
+                        );
+                      })}
                   </Box>
                 )}
 

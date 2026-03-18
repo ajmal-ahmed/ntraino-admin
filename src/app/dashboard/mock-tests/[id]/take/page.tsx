@@ -22,6 +22,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import SendIcon from '@mui/icons-material/Send';
 import TimerIcon from '@mui/icons-material/Timer';
+import FlagIcon from '@mui/icons-material/Flag';
 
 interface Option {
   [key: string]: string;
@@ -32,6 +33,7 @@ interface Question {
   question: string;
   options: Option[];
   additionalOptions?: Option[];
+  passage?: string;
   alignment: 'right' | 'left';
 }
 
@@ -55,6 +57,7 @@ export default function TakeTestPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Map<string, string[]>>(new Map());
+  const [markedForReview, setMarkedForReview] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -139,6 +142,20 @@ export default function TakeTestPage() {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
     }
+  };
+
+  const toggleMarkForReview = () => {
+    if (questions.length === 0) return;
+    const qId = questions[currentIndex].id;
+    setMarkedForReview((prev) => {
+      const next = new Set(prev);
+      if (next.has(qId)) {
+        next.delete(qId);
+      } else {
+        next.add(qId);
+      }
+      return next;
+    });
   };
 
   const handleSubmit = async () => {
@@ -295,24 +312,24 @@ export default function TakeTestPage() {
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   transition: 'all 0.2s ease',
-                  backgroundColor:
-                    i === currentIndex
-                      ? '#667eea'
-                      : answers.has(q.id)
-                      ? 'rgba(34, 197, 94, 0.15)'
-                      : 'rgba(0,0,0,0.04)',
-                  color:
-                    i === currentIndex
-                      ? 'white'
-                      : answers.has(q.id)
-                      ? '#22c55e'
-                      : 'text.secondary',
-                  border:
-                    i === currentIndex
-                      ? '2px solid #667eea'
-                      : answers.has(q.id)
-                      ? '2px solid rgba(34, 197, 94, 0.3)'
-                      : '2px solid transparent',
+                  backgroundColor: (() => {
+                    if (i === currentIndex) return '#667eea';
+                    if (markedForReview.has(q.id)) return 'rgba(234, 179, 8, 0.18)';
+                    if (answers.has(q.id)) return 'rgba(34, 197, 94, 0.15)';
+                    return 'rgba(0,0,0,0.04)';
+                  })(),
+                  color: (() => {
+                    if (i === currentIndex) return 'white';
+                    if (markedForReview.has(q.id)) return '#eab308';
+                    if (answers.has(q.id)) return '#22c55e';
+                    return 'text.secondary';
+                  })(),
+                  border: (() => {
+                    if (i === currentIndex) return '2px solid #667eea';
+                    if (markedForReview.has(q.id)) return '2px solid rgba(234, 179, 8, 0.5)';
+                    if (answers.has(q.id)) return '2px solid rgba(34, 197, 94, 0.3)';
+                    return '2px solid transparent';
+                  })(),
                   '&:hover': {
                     backgroundColor:
                       i === currentIndex
@@ -338,6 +355,24 @@ export default function TakeTestPage() {
             {currentQuestion.question}
           </Typography>
 
+          {currentQuestion.passage && (
+            <Box
+              sx={{
+                mb: 3,
+                p: 2,
+                borderRadius: 2,
+                backgroundColor: 'rgba(59, 130, 246, 0.04)',
+                border: '1px solid rgba(59, 130, 246, 0.15)',
+                direction: isRtl ? 'rtl' : 'ltr',
+                textAlign: isRtl ? 'right' : 'left',
+              }}
+            >
+              <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                {currentQuestion.passage}
+              </Typography>
+            </Box>
+          )}
+
           {/* Additional Options (TS2) */}
           {currentQuestion.additionalOptions &&
             currentQuestion.additionalOptions.length > 0 && (
@@ -352,28 +387,28 @@ export default function TakeTestPage() {
                   textAlign: isRtl ? 'right' : 'left',
                 }}
               >
-                <Typography
-                  variant="caption"
-                  fontWeight={600}
-                  color="text.secondary"
-                  sx={{ mb: 1, display: 'block' }}
-                >
-                  Statements:
-                </Typography>
-                {currentQuestion.additionalOptions.map((opt, i) => {
-                  const key = Object.keys(opt)[0];
-                  return (
-                    <Typography key={i} variant="body2" sx={{ py: 0.3 }}>
-                      <Box
-                        component="span"
-                        sx={{ fontWeight: 700, color: '#f093fb', mr: 1 }}
-                      >
-                        {key.toUpperCase()}.
-                      </Box>
-                      {opt[key]}
-                    </Typography>
-                  );
-                })}
+                {currentQuestion.additionalOptions
+                  .map((opt) => {
+                    const key = Object.keys(opt)[0];
+                    const value = opt[key];
+                    return value ? value : null;
+                  })
+                  .filter((value): value is string => Boolean(value))
+                  .map((value, index) => {
+                    const romanLabels = ['i', 'ii', 'iii', 'iv'];
+                    const label = romanLabels[index] || `${index + 1}`;
+                    return (
+                      <Typography key={index} variant="body2" sx={{ py: 0.3 }}>
+                        <Box
+                          component="span"
+                          sx={{ fontWeight: 700, color: '#f093fb', mr: 1, textTransform: 'lowercase' }}
+                        >
+                          {label}.
+                        </Box>
+                        {value}
+                      </Typography>
+                    );
+                  })}
               </Box>
             )}
 
@@ -460,7 +495,25 @@ export default function TakeTestPage() {
           Previous
         </Button>
 
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Button
+            variant={markedForReview.has(currentQuestion.id) ? 'contained' : 'outlined'}
+            startIcon={<FlagIcon />}
+            onClick={toggleMarkForReview}
+            sx={{
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+              borderColor: 'rgba(234, 179, 8, 0.6)',
+              color: markedForReview.has(currentQuestion.id) ? '#92400e' : '#eab308',
+              backgroundColor: markedForReview.has(currentQuestion.id)
+                ? 'rgba(234, 179, 8, 0.18)'
+                : 'transparent',
+            }}
+          >
+            {markedForReview.has(currentQuestion.id) ? 'Marked for review' : 'Mark for review'}
+          </Button>
+
           {currentIndex === questions.length - 1 ? (
             <Button
               variant="contained"

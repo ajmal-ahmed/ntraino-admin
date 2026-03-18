@@ -4,10 +4,11 @@ import { Question, Option } from '@/types/examination';
 /**
  * Parse an XLSX template file into an array of Question objects.
  *
- * TS1 columns: Question, option-1, option-2, option-3, option-4, Answer [, alignment]
- * TS2 columns: Question, answer-1, answer-2, answer-3, answer-4, option-1, option-2, option-3, option-4, Answer [, alignment]
+ * TS1 columns: Question, option-1, option-2, option-3, option-4, Answer [, alignment] [, passage]
+ * TS2 columns: Question, answer-1, answer-2, answer-3, answer-4, option-1, option-2, option-3, option-4, Answer [, alignment] [, passage]
  *
  * alignment column is optional — defaults to "right", stores "left" only when explicitly set.
+ * passage column is optional — omitted from question data if empty.
  * TS2: if all answer-1..4 are empty, additionalOptions is omitted.
  */
 export function parseTemplate(
@@ -58,6 +59,7 @@ function parseTS1(rows: Record<string, string>[]): Question[] {
     const opt3 = getColumn(row, 'option-3');
     const opt4 = getColumn(row, 'option-4');
     const answer = getColumn(row, 'Answer');
+    const passage = getColumn(row, 'passage');
 
     if (!question) {
       throw new Error(`Row ${index + 2}: "Question" column is empty`);
@@ -70,13 +72,19 @@ function parseTS1(rows: Record<string, string>[]): Question[] {
       { d: opt4 },
     ];
 
-    return {
+    const result: Question = {
       id: `q${index + 1}`,
       question,
       options,
       answer: [answer],
       alignment: getAlignment(row),
     };
+
+    if (passage) {
+      result.passage = passage;
+    }
+
+    return result;
   });
 }
 
@@ -101,6 +109,7 @@ function parseTS2(rows: Record<string, string>[]): Question[] {
     const opt3 = getColumn(row, 'option-3');
     const opt4 = getColumn(row, 'option-4');
     const answer = getColumn(row, 'Answer');
+    const passage = getColumn(row, 'passage');
 
     if (!question) {
       throw new Error(`Row ${index + 2}: "Question" column is empty`);
@@ -121,15 +130,23 @@ function parseTS2(rows: Record<string, string>[]): Question[] {
       alignment: getAlignment(row),
     };
 
-    // Only include additionalOptions if at least one answer column has data
-    const hasAdditionalOptions = [ans1, ans2, ans3, ans4].some((v) => v !== '');
-    if (hasAdditionalOptions) {
-      result.additionalOptions = [
-        { a: ans1 },
-        { b: ans2 },
-        { c: ans3 },
-        { d: ans4 },
-      ];
+    // Only include additionalOptions if at least one answer column has data.
+    // Also skip any individual statement columns that are empty so they are not rendered.
+    const additionalOptionEntries = [
+      { key: 'a', value: ans1 },
+      { key: 'b', value: ans2 },
+      { key: 'c', value: ans3 },
+      { key: 'd', value: ans4 },
+    ].filter((entry) => entry.value !== '');
+
+    if (additionalOptionEntries.length > 0) {
+      result.additionalOptions = additionalOptionEntries.map((entry) => ({
+        [entry.key]: entry.value,
+      }));
+    }
+
+    if (passage) {
+      result.passage = passage;
     }
 
     return result;

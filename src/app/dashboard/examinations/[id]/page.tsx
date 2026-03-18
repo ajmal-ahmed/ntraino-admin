@@ -27,6 +27,7 @@ interface Question {
   options: Option[];
   answer: string[];
   additionalOptions?: Option[];
+   passage?: string;
   alignment: 'right' | 'left';
 }
 
@@ -219,44 +220,67 @@ export default function ViewExaminationPage() {
               </Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ pt: 0, direction: isRtl ? 'rtl' : 'ltr', textAlign: isRtl ? 'right' : 'left' }}>
+              {q.passage && (
+                <Box
+                  sx={{
+                    mb: 2,
+                    p: 2,
+                    borderRadius: 2,
+                    backgroundColor: 'rgba(59, 130, 246, 0.04)',
+                    border: '1px solid rgba(59, 130, 246, 0.15)',
+                    direction: isRtl ? 'rtl' : 'ltr',
+                    textAlign: isRtl ? 'right' : 'left',
+                  }}
+                >
+                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                    {q.passage}
+                  </Typography>
+                </Box>
+              )}
               {/* Additional Options (TS2) */}
               {q.additionalOptions && q.additionalOptions.length > 0 && (
-                <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="caption"
-                    fontWeight={600}
-                    color="text.secondary"
-                    sx={{ mb: 1, display: 'block' }}
-                  >
-                    Answer Statements:
-                  </Typography>
-                  {q.additionalOptions.map((opt, i) => {
-                    const key = Object.keys(opt)[0];
-                    return (
-                      <Box
-                        key={i}
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1,
-                          py: 0.5,
-                          px: 1.5,
-                          mb: 0.5,
-                          borderRadius: 1.5,
-                          backgroundColor: 'rgba(240, 147, 251, 0.06)',
-                        }}
-                      >
-                        <Typography
-                          variant="body2"
-                          fontWeight={700}
-                          sx={{ color: '#f093fb', minWidth: 20 }}
+                <Box
+                  sx={{
+                    mb: 2,
+                    direction: isRtl ? 'rtl' : 'ltr',
+                    textAlign: isRtl ? 'right' : 'left',
+                  }}
+                >
+                  {q.additionalOptions
+                    .map((opt) => {
+                      const key = Object.keys(opt)[0];
+                      const value = opt[key];
+                      return value ? value : null;
+                    })
+                    .filter((value): value is string => Boolean(value))
+                    .map((value, index) => {
+                      const romanLabels = ['i', 'ii', 'iii', 'iv'];
+                      const label = romanLabels[index] || `${index + 1}`;
+                      return (
+                        <Box
+                          key={index}
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            py: 0.5,
+                            px: 1.5,
+                            mb: 0.5,
+                            borderRadius: 1.5,
+                            backgroundColor: 'rgba(240, 147, 251, 0.06)',
+                          }}
                         >
-                          {key.toUpperCase()}.
-                        </Typography>
-                        <Typography variant="body2">{opt[key]}</Typography>
-                      </Box>
-                    );
-                  })}
+                          <Typography
+                            variant="body2"
+                            fontWeight={700}
+                            sx={{ color: '#f093fb', minWidth: 20, textTransform: 'lowercase' }}
+                          >
+                            {label}.
+                          </Typography>
+                          <Typography variant="body2">{value}</Typography>
+                        </Box>
+                      );
+                    })}
                 </Box>
               )}
 
