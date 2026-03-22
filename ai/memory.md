@@ -1,6 +1,6 @@
 # nTraino QuizzMe — Project Memory
 
-> Last updated: 2026-03-15
+> Last updated: 2026-03-22
 
 ## Project Overview
 
@@ -42,7 +42,9 @@
     "options": [{"a": "value"}, {"b": "value"}, {"c": "value"}, {"d": "value"}],
     "answer": ["actual value"],
     "additionalOptions": [{"a": "..."}, ...], // TS2 only, omitted if all empty
-    "alignment": "right | left"               // default "right", "left" for Arabic
+    "alignment": "right | left",              // default "right", "left" for Arabic
+    "matchColumnA": "multi-line string",       // optional "Match the Following" column A
+    "matchColumnB": "multi-line string"        // optional "Match the Following" column B
   }],
   "totalQuestions": "number",
   "createdBy": "string",
@@ -78,11 +80,12 @@
 
 ## Template Formats (XLSX)
 
-- **TS1**: `Question, option-1, option-2, option-3, option-4, Answer [, alignment]`
-- **TS2**: `Question, answer-1, answer-2, answer-3, answer-4, option-1, option-2, option-3, option-4, Answer [, alignment]`
+- **TS1**: `Question, option-1, option-2, option-3, option-4, Answer [, alignment] [, passage] [, match_column_a, match_column_b]`
+- **TS2**: `Question, answer-1, answer-2, answer-3, answer-4, option-1, option-2, option-3, option-4, Answer [, alignment] [, passage] [, match_column_a, match_column_b]`
 - TS2 `additionalOptions` (answer-1..4) are rendered before the main options in the UI
 - **TS2 optimization**: if all answer-1..4 are empty, `additionalOptions` is omitted (behaves like TS1)
 - **Alignment column**: optional, defaults to `"right"`. Only stores `"left"` when explicitly set (for Arabic/RTL)
+- **Match the Following**: optional `match_column_a` and `match_column_b` columns — multi-line text rendered as two 50/50 side-by-side columns below the question text. Omitted from question data if empty.
 - Options and answer logic is identical for both types
 
 ---
@@ -99,6 +102,7 @@
 | **Sample template downloads** | API at `/api/templates/sample?type=ts1|ts2` generates XLSX on the fly |
 | **TS2 empty answer fallback** | If all answer-1..4 columns are blank, question behaves exactly like TS1 — no empty arrays stored |
 | **Alignment column** | Optional XLSX column, default `"right"`, `"left"` for Arabic. UI applies `dir="rtl"` + `textAlign: right` per question |
+| **Match the Following** | Optional `match_column_a` / `match_column_b` XLSX columns, stored as multi-line strings, rendered as two 50/50 columns below question text. Omitted when empty |
 
 ---
 

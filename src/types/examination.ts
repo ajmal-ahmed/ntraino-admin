@@ -10,6 +10,8 @@ export interface Question {
   additionalOptions?: Option[]; // TS2 only — [{a:"answer 1"}, {b:"answer 2"}, ...]
   alignment: 'right' | 'left'; // default "right", "left" for Arabic/RTL
   passage?: string;             // optional scenario/passage text
+  matchColumnA?: string;        // optional "Match the Following" column A (multi-line)
+  matchColumnB?: string;        // optional "Match the Following" column B (multi-line)
 }
 
 export interface Examination {

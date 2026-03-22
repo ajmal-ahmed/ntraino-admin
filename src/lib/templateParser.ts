@@ -72,6 +72,9 @@ function parseTS1(rows: Record<string, string>[]): Question[] {
       { d: opt4 },
     ];
 
+    const matchColumnA = getColumn(row, 'match_column_a');
+    const matchColumnB = getColumn(row, 'match_column_b');
+
     const result: Question = {
       id: `q${index + 1}`,
       question,
@@ -82,6 +85,13 @@ function parseTS1(rows: Record<string, string>[]): Question[] {
 
     if (passage) {
       result.passage = passage;
+    }
+
+    if (matchColumnA) {
+      result.matchColumnA = matchColumnA;
+    }
+    if (matchColumnB) {
+      result.matchColumnB = matchColumnB;
     }
 
     return result;
@@ -122,6 +132,9 @@ function parseTS2(rows: Record<string, string>[]): Question[] {
       { d: opt4 },
     ];
 
+    const matchColumnA = getColumn(row, 'match_column_a');
+    const matchColumnB = getColumn(row, 'match_column_b');
+
     const result: Question = {
       id: `q${index + 1}`,
       question,
@@ -147,6 +160,13 @@ function parseTS2(rows: Record<string, string>[]): Question[] {
 
     if (passage) {
       result.passage = passage;
+    }
+
+    if (matchColumnA) {
+      result.matchColumnA = matchColumnA;
+    }
+    if (matchColumnB) {
+      result.matchColumnB = matchColumnB;
     }
 
     return result;

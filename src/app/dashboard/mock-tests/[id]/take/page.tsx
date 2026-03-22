@@ -35,6 +35,8 @@ interface Question {
   additionalOptions?: Option[];
   passage?: string;
   alignment: 'right' | 'left';
+  matchColumnA?: string;
+  matchColumnB?: string;
 }
 
 interface MockTestData {
@@ -354,6 +356,51 @@ export default function TakeTestPage() {
             </Box>
             {currentQuestion.question}
           </Typography>
+
+          {/* Match the Following Columns */}
+          {(currentQuestion.matchColumnA || currentQuestion.matchColumnB) && (
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                mb: 3,
+                direction: isRtl ? 'rtl' : 'ltr',
+              }}
+            >
+              <Box
+                sx={{
+                  flex: 1,
+                  p: 2,
+                  borderRadius: 2,
+                  backgroundColor: 'rgba(102, 126, 234, 0.04)',
+                  border: '1px solid rgba(102, 126, 234, 0.15)',
+                }}
+              >
+                <Typography variant="caption" fontWeight={700} sx={{ mb: 1, display: 'block', color: '#667eea' }}>
+                  Column A
+                </Typography>
+                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                  {currentQuestion.matchColumnA}
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  flex: 1,
+                  p: 2,
+                  borderRadius: 2,
+                  backgroundColor: 'rgba(240, 147, 251, 0.04)',
+                  border: '1px solid rgba(240, 147, 251, 0.15)',
+                }}
+              >
+                <Typography variant="caption" fontWeight={700} sx={{ mb: 1, display: 'block', color: '#f093fb' }}>
+                  Column B
+                </Typography>
+                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                  {currentQuestion.matchColumnB}
+                </Typography>
+              </Box>
+            </Box>
+          )}
 
           {currentQuestion.passage && (
             <Box

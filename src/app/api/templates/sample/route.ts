@@ -28,6 +28,8 @@ export async function GET(request: NextRequest) {
         'Answer': 'New Delhi',
         'alignment': '',
         'passage': 'Read the following and answer the question:\nIndia is a country in South Asia with New Delhi as its capital.',
+        'match_column_a': '',
+        'match_column_b': '',
       },
       {
         'Question': 'What is 2 + 2?',
@@ -38,6 +40,20 @@ export async function GET(request: NextRequest) {
         'Answer': '4',
         'alignment': '',
         'passage': '',
+        'match_column_a': '',
+        'match_column_b': '',
+      },
+      {
+        'Question': 'Match the following Indian states with their capitals:',
+        'option-1': 'A-Kochi, B-Bengaluru, C-Chennai',
+        'option-2': 'A-Chennai, B-Kochi, C-Bengaluru',
+        'option-3': 'A-Bengaluru, B-Chennai, C-Kochi',
+        'option-4': 'A-Thiruvananthapuram, B-Bengaluru, C-Chennai',
+        'Answer': 'A-Thiruvananthapuram, B-Bengaluru, C-Chennai',
+        'alignment': '',
+        'passage': '',
+        'match_column_a': 'A. Kerala\nB. Karnataka\nC. Tamil Nadu',
+        'match_column_b': 'A. Chennai\nB. Kochi\nC. Bengaluru',
       },
       {
         'Question': '\u0645\u0627 \u0647\u064A \u0639\u0627\u0635\u0645\u0629 \u0645\u0635\u0631\u061F',
@@ -47,6 +63,8 @@ export async function GET(request: NextRequest) {
         'option-4': '\u0623\u0633\u0648\u0627\u0646',
         'Answer': '\u0627\u0644\u0642\u0627\u0647\u0631\u0629',
         'alignment': 'left',
+        'match_column_a': '',
+        'match_column_b': '',
       },
     ];
   } else {
@@ -65,6 +83,8 @@ export async function GET(request: NextRequest) {
         'Answer': 'A & B only',
         'alignment': '',
         'passage': 'Consider the following technologies and how they are used in web development.',
+        'match_column_a': '',
+        'match_column_b': '',
       },
       {
         'Question': 'Which of these are NoSQL databases?',
@@ -79,6 +99,24 @@ export async function GET(request: NextRequest) {
         'Answer': 'A & B only',
         'alignment': '',
         'passage': '',
+        'match_column_a': '',
+        'match_column_b': '',
+      },
+      {
+        'Question': 'Match the following Indian states with their capitals:',
+        'answer-1': '',
+        'answer-2': '',
+        'answer-3': '',
+        'answer-4': '',
+        'option-1': 'A-Kochi, B-Bengaluru, C-Chennai',
+        'option-2': 'A-Chennai, B-Kochi, C-Bengaluru',
+        'option-3': 'A-Bengaluru, B-Chennai, C-Kochi',
+        'option-4': 'A-Thiruvananthapuram, B-Bengaluru, C-Chennai',
+        'Answer': 'A-Thiruvananthapuram, B-Bengaluru, C-Chennai',
+        'alignment': '',
+        'passage': '',
+        'match_column_a': 'A. Kerala\nB. Karnataka\nC. Tamil Nadu',
+        'match_column_b': 'A. Chennai\nB. Kochi\nC. Bengaluru',
       },
       {
         'Question': 'What is the largest ocean on Earth?',
@@ -92,6 +130,8 @@ export async function GET(request: NextRequest) {
         'option-4': 'Arctic Ocean',
         'Answer': 'Pacific Ocean',
         'alignment': '',
+        'match_column_a': '',
+        'match_column_b': '',
       },
       {
         'Question': '\u0645\u0627 \u0647\u064A \u0639\u0627\u0635\u0645\u0629 \u0627\u0644\u0645\u0645\u0644\u0643\u0629 \u0627\u0644\u0639\u0631\u0628\u064A\u0629 \u0627\u0644\u0633\u0639\u0648\u062F\u064A\u0629\u061F',
@@ -105,6 +145,8 @@ export async function GET(request: NextRequest) {
         'option-4': '\u0644\u0627 \u0634\u064A\u0621 \u0645\u0645\u0627 \u0633\u0628\u0642',
         'Answer': '\u0623 \u0641\u0642\u0637',
         'alignment': 'left',
+        'match_column_a': '',
+        'match_column_b': '',
       },
     ];
   }
